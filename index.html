@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amity University Mess Management</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    header {
+      background-color: #0d2d52;
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #1e3a5f;
+    }
+    .tab {
+      padding: 1rem 2rem;
+      cursor: pointer;
+      color: #fff;
+      background: #1e3a5f;
+      border-bottom: 4px solid transparent;
+      transition: 0.3s;
+    }
+    .tab:hover {
+      background: #294d73;
+    }
+    .tab.active {
+      border-bottom: 4px solid #f1c40f;
+      background: #163354;
+      font-weight: bold;
+    }
+    .menu-section {
+      display: none;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 10px;
+      margin-top: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .menu-section.active {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .item {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+    .item:hover {
+      transform: scale(1.03);
+    }
+    .item span {
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+    .btn {
+      background: #0d2d52;
+      color: white;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #143e72;
+    }
+    .cart, .membership {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h3 {
+      margin-bottom: 1rem;
+      color: #0d2d52;
+    }
+    #cart-items li {
+      list-style: none;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Amity University Mess Management 🍽️</header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(event, 'breakfast')">Breakfast</div>
+    <div class="tab" onclick="showTab(event, 'lunch')">Lunch</div>
+    <div class="tab" onclick="showTab(event, 'snacks')">Snacks</div>
+    <div class="tab" onclick="showTab(event, 'dinner')">Dinner</div>
+  </div>
+
+  <div id="breakfast" class="menu-section active"></div>
+  <div id="lunch" class="menu-section"></div>
+  <div id="snacks" class="menu-section"></div>
+  <div id="dinner" class="menu-section"></div>
+
+  <div class="cart">
+    <h3>🛒 Your Cart</h3>
+    <ul id="cart-items"></ul>
+  </div>
+
+  <div class="membership">
+    <h3>📋 Membership Plans</h3>
+    <ul>
+      <li><strong>Daily:</strong> ₹100/day - Includes all 4 meals</li>
+      <li><strong>Monthly:</strong> ₹2500/month - Unlimited regular meals</li>
+      <li><strong>Yearly:</strong> ₹27,000/year - Priority meals, special Sunday menu</li>
+    </ul>
+    <button class="btn">Subscribe Now</button>
+  </div>
+
+  <script>
+    const menus = {
+      breakfast: ['Idli & Sambar', 'Masala Dosa', 'Set Dosa', 'Upma', 'Poori & Aloo', 'Vada', 'Pongal', 'Bread Omelette', 'Paratha & Curd', 'Boiled Eggs', 'Cornflakes & Milk', 'Oats', 'Pav Bhaji', 'Chole Bhature', 'Fruit Salad'],
+      lunch: ['Rice & Sambar', 'Rasam', 'Paneer Butter Masala', 'Chana Masala', 'Dal Tadka', 'Mix Veg Curry', 'Jeera Rice', 'Ghee Rice', 'Curd Rice', 'Lemon Rice', 'Veg Pulao', 'Chapati & Curry', 'Veg Biryani', 'Roti & Paneer', 'Fried Rice'],
+      snacks: ['Samosa', 'Cutlet', 'Bonda', 'Pakora', 'French Fries', 'Maggi', 'Sandwich', 'Banana Chips', 'Boiled Chana', 'Kachori'],
+      dinner: ['Chapati & Dal', 'Tomato Bath', 'Khichdi', 'Vegetable Upma', 'Lemon Rice', 'Veg Kurma', 'Parotta & Kurma', 'Gobi Manchurian', 'Rice & Tomato Rasam', 'Sabudana Khichdi', 'Sprouts Salad', 'Curd Rice', 'Bhindi Fry', 'Kadhi & Rice', 'Stuffed Paratha']
+    };
+
+    function generateItems(items, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = items.map(item => `
+        <div class="item">
+          <span>${item}</span>
+          <button class="btn" onclick="addToCart('${item}')">Add</button>
+        </div>
+      `).join('');
+    }
+
+    for (const category in menus) {
+      generateItems(menus[category], category);
+    }
+
+    function showTab(event, tabId) {
+      document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function addToCart(item) {
+      const list = document.getElementById('cart-items');
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    }
+  </script>
+
+</body>
+</html>
+
